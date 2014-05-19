@@ -1,0 +1,72 @@
+Purpose
+Process FORTRAN files which are valid DEC VAX FORTRAN and
+produce:
+0.   A valid FORTRAN 77 source file
+0.  An error file
+0.  A list of errors on stdout
+
+Usage
+     vax2Unix [options] @fileList
+     vax2Unix [options] file1 [file2 ...]
+fileList is a file containing a list of files to process, one
+name per line.  Each file must have an extent .for or .inc.  
+options are:
+     -D produce verbose output from the parser.  Only for debug.
+     -Ipath search path for include files
+     -G produce a file always named V2U.globalSymbols which
+          contains definitions of subroutines, functions and
+          common areas in a format defined below.
+     -M produce a list of dependencies in a format suitable for
+          inclusion in a make file.  The dependencies are written to a file
+          named 'makeDependencyFile'.
+      -Ttarget target is either VAX of F77.  Specifying VAX will
+          supress some error messages.  In this case you are doing a VAX to
+          VAX "conversion", which makes no sense.  What this really means
+          is that you are using vax2Unix as some kind of lint for FORTRAN. 
+          If the target is VAX, I should probably accept any file extension
+          for input and supress the parsed output altogether, producing
+          only .err files.
+
+Input
+The input file must be legal VAX FORTRAN,  FORTRAN 77, (or
+eventually a V2U.globalSymbols file generated with the -G
+option).  
+
+Output
+Produce an output file foo.f or foo.i depending on whether the
+input was foo.for or foo.inc.  The error file will be named
+foo.err.  The .f or .i files are my best attempt at legal FORTRAN
+77.  I am unable to convert everything.  Run the output through a
+FORTRAN 77 compiler and you will see where the conversion failed.
+Such failures will have to be converted manually.  If the
+converter is unable to parse a statement in the input file an
+error message will be written in the output file as well as the
+error file.  The line number referenced is often of little help,
+particularly if there are many comment lines between the end of
+the offending statement and the start of the next executable
+statement.  Use the code surrounding the erroneous statement to
+find the problem.
+Any line of legal code which produces a parse error message is
+exposing an error in the conversion program.  I may be willing to
+fix the problem.  See the Support section.
+
+Support
+Basically none.  However if you can demonstrate a problem using a
+legal input file of no more that 100 lines I will try to look at
+it.
+
+Limitations
+I don't understand the grammar rules as they apply to PARAMETERS.
+In particular, I can't determine whether the sequence of
+statements
+     PARAMETER (foo=bar/2)
+PARAMETER (bar=4)
+is legal.  In any event, I have no intention of assigning a value
+to foo in this case
+
+Development
+To Do
+Contact Info
+robrien@pop500.gsfc.nasa.gov
+
+
